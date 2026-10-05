@@ -3,9 +3,20 @@ const User = require('../models/User');
 const messageService = require('./messageService');
 const { verifyToken } = require('./tokenService');
 
+async function broadcastRoomUsers(io, roomId) {
+  const sockets = await io.in(roomId).fetchSockets();
+  const users = [...new Map(
+    sockets
+      .filter((socket) => socket.data.user)
+      .map((socket) => [socket.data.user.id, socket.data.user])
+  ).values()];
+
+  io.to(roomId).emit('room:users', users);
+}
+
 function initializeSocket(server) {
   const io = new Server(server, {
-    cors: { origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000' }
+    cors: { origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173' }
   });
 
   io.use(async (socket, next) => {
@@ -18,6 +29,8 @@ function initializeSocket(server) {
       if (!user) return next(new Error('Invalid or expired token'));
 
       socket.user = user;
+      socket.data.user = { id: user.id, username: user.username };
+      socket.data.roomIds = new Set();
       return next();
     } catch {
       return next(new Error('Invalid or expired token'));
@@ -32,7 +45,21 @@ function initializeSocket(server) {
 
       const normalizedRoomId = roomId.trim();
       socket.join(normalizedRoomId);
+      socket.data.roomIds.add(normalizedRoomId);
+      broadcastRoomUsers(io, normalizedRoomId).catch((error) => {
+        console.error('Could not update room presence:', error.message);
+      });
       return acknowledge({ roomId: normalizedRoomId });
+    });
+
+    socket.on('room:typing', (data) => {
+      const roomId = data?.roomId;
+      if (typeof roomId !== 'string' || !socket.rooms.has(roomId.trim())) return;
+
+      socket.to(roomId.trim()).emit('room:typing', {
+        user: socket.data.user,
+        isTyping: Boolean(data.isTyping)
+      });
     });
 
     socket.on('message:send', async (data, acknowledge = () => {}) => {
@@ -56,6 +83,18 @@ function initializeSocket(server) {
       } catch (error) {
         console.error('Could not send socket message:', error.message);
         return acknowledge({ error: 'Could not send message' });
+      }
+    });
+
+    socket.on('disconnect', () => {
+      for (const roomId of socket.data.roomIds) {
+        socket.to(roomId).emit('room:typing', {
+          user: socket.data.user,
+          isTyping: false
+        });
+        broadcastRoomUsers(io, roomId).catch((error) => {
+          console.error('Could not update room presence:', error.message);
+        });
       }
     });
   });

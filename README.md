@@ -25,10 +25,21 @@ A modern chat application with real-time messaging, built using Node.js, React, 
 
 ## Project Structure
 - `backend/`: Express REST API, MongoDB models, JWT auth, and Socket.IO messaging
+- `frontend/`: React + Vite chat client with Tailwind CSS
 - `ARCHITECTURE.md`: application architecture overview
 
 ## Getting Started
-The backend setup and API details are in [backend/README.md](backend/README.md). A frontend is not scaffolded yet.
+Use Node.js 20.19 or newer for Vite and start each app in a separate terminal.
+
+### Backend
+1. In `backend/`, copy `.env.example` to `.env` and configure MongoDB and a long random `JWT_SECRET`.
+2. Run `npm install`, then `npm run dev`.
+
+### Frontend
+1. In `frontend/`, copy `.env.example` to `.env`.
+2. Run `npm install`, then `npm run dev`.
+
+The frontend opens at `http://localhost:5173` and connects to the API at `http://localhost:4000` by default. See [backend/README.md](backend/README.md) for API and Socket.IO details.
 
 ## 📌 Roadmap
 - [ ] Add file sharing

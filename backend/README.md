@@ -27,3 +27,5 @@ Pass the returned token as `Authorization: Bearer <token>` for protected routes.
 ## Socket.IO
 
 Connect with the JWT in the Socket.IO auth payload: `{ auth: { token } }`. Emit `room:join` with a room ID; after joining, emit `message:send` with `{ "roomId", "content" }`. Both events accept an acknowledgement callback. New persisted messages are broadcast as `message:new` to all sockets in that room.
+
+Clients can emit `room:typing` with `{ "roomId", "isTyping" }`; other room members receive the same event with the typing user's `{ "id", "username" }`. The server broadcasts `room:users` with the deduplicated online users whenever someone joins or leaves a room.
