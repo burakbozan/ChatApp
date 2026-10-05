@@ -1,49 +1,57 @@
 # ChatApp
 
-| Project | Language/Stack | Why It’s Popular | Difficulty |
-| --- | --- | --- | --- |
-| **Chat App (Realtime)** | JavaScript/TypeScript + Node.js + React | WebSockets, frontend/backend integration | Intermediate |
+A full-stack realtime chat app with a React client and a Node.js API. Users can register and sign in, join preset rooms, exchange persisted messages, and see room presence and typing activity.
 
-# Realtime Chat App
+## Implemented
 
-A modern chat application with real-time messaging, built using Node.js, React, and WebSockets.
+- Registration and login with JWT authentication; passwords are hashed before storage.
+- Protected REST endpoints for loading and sending messages.
+- Authenticated Socket.IO connections with room joining, realtime message delivery, typing updates, and online user lists.
+- Responsive React room UI with message history, room navigation, and connection status.
 
-## 🚀 Features
-- User registration & JWT authentication
-- Real-time messaging with Socket.IO
-- Chat rooms & private messaging
-- Message persistence with MongoDB
-- Typing indicators & online status
-- Docker-ready deployment
+Private messaging, room creation, file sharing, and horizontal Socket.IO scaling are not implemented yet.
 
-## 🛠️ Tech Stack
-- Frontend: React + Vite/Next.js
-- Backend: Node.js + Express + Socket.IO
-- Database: MongoDB, Redis (optional for scaling)
-- Auth: JWT/OAuth2
-- Deployment: Docker, Kubernetes-ready
+## Stack
+
+- Frontend: React 19, Vite 8, React Router, Tailwind CSS 4, Socket.IO Client
+- Backend: Node.js, Express 5, Socket.IO 4
+- Persistence and authentication: MongoDB with Mongoose, bcrypt, and JWT
 
 ## Project Structure
-- `backend/`: Express REST API, MongoDB models, JWT auth, and Socket.IO messaging
-- `frontend/`: React + Vite chat client with Tailwind CSS
-- `ARCHITECTURE.md`: application architecture overview
 
-## Getting Started
-Use Node.js 20.19 or newer for Vite and start each app in a separate terminal.
+- `frontend/`: Vite client; setup and routes are documented in [frontend/README.md](frontend/README.md)
+- `backend/`: REST and Socket.IO server; see [backend/README.md](backend/README.md)
+- `ARCHITECTURE.md`: implemented components, request flows, and current scaling limits
 
-### Backend
-1. In `backend/`, copy `.env.example` to `.env` and configure MongoDB and a long random `JWT_SECRET`.
-2. Run `npm install`, then `npm run dev`.
+## Local Setup
 
-### Frontend
-1. In `frontend/`, copy `.env.example` to `.env`.
-2. Run `npm install`, then `npm run dev`.
+MongoDB must be running locally or reachable through a MongoDB connection string. The backend requires Node.js 18.11 or newer. Vite 8 requires Node.js 20.19+ or 22.12+.
 
-The frontend opens at `http://localhost:5173` and connects to the API at `http://localhost:4000` by default. See [backend/README.md](backend/README.md) for API and Socket.IO details.
+In the first terminal, configure and start the backend:
 
-## 📌 Roadmap
-- [ ] Add file sharing
-- [ ] Push notifications
-- [ ] Role-based access
-- [ ] CI/CD pipeline
+```powershell
+cd backend
+Copy-Item .env.example .env
+# Set MONGODB_URI and replace JWT_SECRET in .env
+npm install
+npm run dev
+```
+
+In a second terminal, start the frontend:
+
+```powershell
+cd frontend
+Copy-Item .env.example .env
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. The frontend uses `http://localhost:4000` for the API by default; set `VITE_API_URL` in `frontend/.env` to change it. `CLIENT_ORIGIN` controls the backend's allowed browser origin.
+
+## Roadmap
+
+- Persist room definitions and support room creation and access rules.
+- Add private messaging, file sharing, and push notifications.
+- Add a Redis Socket.IO adapter for multi-instance presence and messaging.
+- Add deployment configuration and automated integration tests.
 
