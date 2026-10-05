@@ -23,22 +23,12 @@ A modern chat application with real-time messaging, built using Node.js, React, 
 - Auth: JWT/OAuth2
 - Deployment: Docker, Kubernetes-ready
 
-## 📂 Project Structure
-/backend
-├── src
-├── package.json
-/frontend
-├── src
-├── package.json
-/docs
-├── ARCHITECTURE.md
+## Project Structure
+- `backend/`: Express REST API, MongoDB models, JWT auth, and Socket.IO messaging
+- `ARCHITECTURE.md`: application architecture overview
 
-## ▶️ Getting Started
-1. Clone the repo
-2. Run `npm install` in `/backend` and `/frontend`
-3. Start backend: `npm run dev`
-4. Start frontend: `npm run dev`
-5. Open `http://localhost:3000`
+## Getting Started
+The backend setup and API details are in [backend/README.md](backend/README.md). A frontend is not scaffolded yet.
 
 ## 📌 Roadmap
 - [ ] Add file sharing
